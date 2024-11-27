@@ -9,7 +9,6 @@ Key Features:
 
 Technologies Used:
 - Flutter for cross-platform mobile app development.
-- Firebase (or any other backend, if used) for data storage and authentication.
 
 Get started:
 1. Clone the repository.
