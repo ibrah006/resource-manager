@@ -1,16 +1,17 @@
-# resource_manager
+# Resource Manager - Flutter App
 
-A new Flutter project.
+This is a Flutter application for managing resources and expenses. Users can track and manage various resources (such as inventory, assets, etc.) and expenses (such as costs related to resources, operations, etc.) in a seamless and intuitive interface.
 
-## Getting Started
+Key Features:
+- Manage and categorize resources (e.g., materials, equipment).
+- Track and calculate expenses related to each resource.
+- Overview and reports for better resource management and cost optimization.
 
-This project is a starting point for a Flutter application.
+Technologies Used:
+- Flutter for cross-platform mobile app development.
 
-A few resources to get you started if this is your first Flutter project:
+Get started:
+1. Clone the repository.
+2. Run `flutter pub get` to install dependencies.
+3. Launch the app using `flutter run`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
