@@ -72,11 +72,11 @@ class _SearchFieldState extends State<SearchField> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle, color: Colors.greenAccent.shade400, size: 18),
+                  Icon(selectedItem.netQuantity()<1? Icons.cancel :  Icons.check_circle, color: selectedItem.netQuantity()<1? Colors.red.shade600 : Colors.greenAccent.shade400, size: 18),
                   SizedBox(width: 6),
                   Text(
-                    '${selectedItem.netQuantity()} left',
-                    style: TextStyle(color: Colors.greenAccent.shade400, fontSize: 12),
+                    selectedItem.netQuantity()<1? "Out of" : '${selectedItem.netQuantity()} left',
+                    style: TextStyle(color: selectedItem.netQuantity()<1? Colors.red.shade600 : Colors.greenAccent.shade400, fontSize: 12),
                   ),
                 ],
               ),

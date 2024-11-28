@@ -46,6 +46,22 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   late Entry? inputEntry;
 
+  void updateQuantityState() {
+    int quantityAvailable = 0;
+    try {
+    quantityAvailable = items.firstWhere((item) {
+      return item.name.toLowerCase() == nameController.text.toLowerCase();
+    }).netQuantity();
+    } catch(e) {}
+
+    if (int.parse(quantityController.text.isNotEmpty? quantityController.text : "0") > quantityAvailable) {
+    quantityValidate = true;
+    } else {
+    quantityValidate = false;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -92,9 +108,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        setState(() {
-                          isSell = false;
-                        });
+                        isSell = false;
+                        updateQuantityState();
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -122,19 +137,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                       onTap: () {
                         isSell = true;
 
-                        int quantityAvailable = 0;
-                        try {
-                          quantityAvailable = items.firstWhere((item) {
-                            return item.name.toLowerCase() == nameController.text.toLowerCase();
-                          }).netQuantity();
-                        } catch(e) {}
-
-                        if (int.parse(quantityController.text.isNotEmpty? quantityController.text : "0") > quantityAvailable) {
-                          quantityValidate = true;
-                        } else {
-                          quantityValidate = false;
-                        }
-                        setState(() {});
+                        updateQuantityState();
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -235,7 +238,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                         }
                         setState(() {});
                       },
-                      decoration: AddEntryScreen.inputDecoration("Enter quantity").copyWith(errorText: quantityValidate? "No sifficient quantity in hand" : null)
+                      decoration: AddEntryScreen.inputDecoration("Enter quantity").copyWith(errorText: quantityValidate? "No sufficient quantity in hand" : null)
                     ),
                     const SizedBox(height: 20),
 

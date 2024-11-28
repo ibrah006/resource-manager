@@ -26,14 +26,18 @@ class EntryTile extends StatelessWidget {
       ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            "${entry.isSell? '+' : '-'}\$${(entry.price * entry.quantity).toStringAsFixed(2)}",
+            //${entry.isSell? '+' : '-'}
+            "\$${(entry.price * entry.quantity).toStringAsFixed(2)}",
             style: TextStyle(
               color: entry.isSell? Colors.green : Colors.red,
               fontWeight: FontWeight.bold,
+              fontSize: 13.5
             ),
           ),
+          SizedBox(height: 1.5),
           Text(
             "Qty: ${entry.quantity.toString()}",
             style: TextStyle(
@@ -46,7 +50,7 @@ class EntryTile extends StatelessWidget {
     );
   }
 
-  String formatDateTime(DateTime dateTime) {
+  static String formatDateTime(DateTime dateTime) {
     final today = DateTime.now();
     
     // Check if the given date is today
