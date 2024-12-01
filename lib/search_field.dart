@@ -4,7 +4,7 @@ import 'package:resource_manager/item.dart';
 
 class SearchField extends StatefulWidget {
 
-  const SearchField({required this.controller, required this.items, this.hint = "Enter name", this.onlyItems = false, required this.onSelected});
+  const SearchField({required this.controller, required this.items, this.hint = "Enter name", this.isSell = false, required this.onSelected});
 
   final TextEditingController controller;
 
@@ -12,7 +12,7 @@ class SearchField extends StatefulWidget {
 
   final String hint;
 
-  final bool onlyItems;
+  final bool isSell;
 
   final Function(String value) onSelected;
 
@@ -41,7 +41,7 @@ class _SearchFieldState extends State<SearchField> {
             .where((item) => item.name.toLowerCase().contains(query.toLowerCase()))
             .toList();
 
-        if (widget.onlyItems && filteredItems.isEmpty) {
+        if (widget.isSell && filteredItems.isEmpty) {
           validate = true;
         }
       }
@@ -72,11 +72,11 @@ class _SearchFieldState extends State<SearchField> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(selectedItem.netQuantity()<1? Icons.cancel :  Icons.check_circle, color: selectedItem.netQuantity()<1? Colors.red.shade600 : Colors.greenAccent.shade400, size: 18),
+                  Icon(selectedItem.netQuantity() < 1? Icons.cancel :  Icons.check_circle, color: selectedItem.netQuantity()<1? (widget.isSell? Colors.red.shade600 : Colors.orange.shade500) : Colors.greenAccent.shade400, size: 18),
                   SizedBox(width: 6),
                   Text(
-                    selectedItem.netQuantity()<1? "Out of" : '${selectedItem.netQuantity()} left',
-                    style: TextStyle(color: selectedItem.netQuantity()<1? Colors.red.shade600 : Colors.greenAccent.shade400, fontSize: 12),
+                    selectedItem.netQuantity() < 1? "No stock" : '${selectedItem.netQuantity()} left',
+                    style: TextStyle(color: selectedItem.netQuantity()<1? (widget.isSell? Colors.red.shade600 : Colors.orange.shade500) : Colors.greenAccent.shade400, fontSize: 12),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:resource_manager/database.dart';
+import 'package:resource_manager/entry.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Item {
@@ -20,6 +21,10 @@ class Item {
     return Item(json["itemId"], name: json["name"], quantityBought: json["quantityBought"], quantitySold: json["quantitySold"], totalBought: json["totalBought"], totalSold: json["totalSold"]);
   }
 
+  factory Item.empty(Entry entry) {
+    return Item(entry.itemId, name: entry.name, quantityBought: 0, quantitySold: 0, totalBought: 0, totalSold: 0);
+  }
+
   Map<String, Object?> toMap() {
     return {
       "itemId": itemId,
@@ -39,7 +44,7 @@ class Item {
     return isSell? quantitySold : quantityBought;
   }
 
-  static const TABLENAME = "entries";
+  static const TABLENAME = "item";
 
   Future<bool> _isItemExist(String itemId) async {
     Database db = await LocalDatabase.database;
@@ -67,14 +72,21 @@ class Item {
   }
 
   // Update an existing item
-  Future<int> updateItem(Item) async {
+  Future<int> updateItem() async {
     Database db = await LocalDatabase.database;
-    return await db.update(
+    
+    final result = await db.update(
       TABLENAME,
       toMap(),
       where: 'itemId = ?',
       whereArgs: [itemId],
     );
+
+    if (result == -1) {
+      return await addItem();
+    }
+
+    return result;
   }
 
 }

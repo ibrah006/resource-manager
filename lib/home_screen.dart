@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:resource_manager/data_provider.dart';
+import 'package:resource_manager/database.dart';
 import 'package:resource_manager/entry.dart';
 import 'package:resource_manager/entry_tile.dart';
 import 'package:resource_manager/home_screen_header.dart';
@@ -217,21 +218,28 @@ class _FinanceHomeScreenState extends State<FinanceHomeScreen> with SingleTicker
 
     // getSubcategories("Techonology");
 
-    SharedPreferences.getInstance().then((value) {
+    SharedPreferences.getInstance().then((value) async {
       sharedPreferences = value;
+      
+      Provider.of<DataProvider>(context, listen: false).entries = await LocalDatabase.getAllEntries();
+      Provider.of<DataProvider>(context, listen: false).items = await LocalDatabase.getAllItems();
+
+      print("items: ${getItems()}, entries, ${getEntries()}");
+
       Provider.of<DataProvider>(context, listen: false).initalizeIsSample(initialValue: sharedPreferences.getBool("isSampleLoaded") == true);
+
+      Provider.of<DataProvider>(context, listen: false).calculateHeader();
       setState(() {});
     });
 
     _tabController = TabController(length: 2, vsync: this);
 
-    Future.delayed(Duration(milliseconds: 100)).then((value) {
-      print("items: ${getItems()}, entries, ${getEntries()}");
-      Provider.of<DataProvider>(context, listen: false).calculateHeader();
-      setState(() {
+    // Future.delayed(Duration(milliseconds: 100)).then((value) {
+      
+    //   setState(() {
         
-      });
-    });
+    //   });
+    // });
 
   }
 

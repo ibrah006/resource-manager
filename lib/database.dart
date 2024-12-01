@@ -34,7 +34,7 @@ class LocalDatabase {
 
     // Create items table
     await db.execute('''
-      CREATE TABLE ${Item.TABLENAME} (
+      CREATE TABLE IF NOT EXISTS ${Item.TABLENAME} (
         itemId TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         quantityBought INTEGER NOT NULL,
@@ -44,18 +44,17 @@ class LocalDatabase {
       )
     ''');
 
-    // Create entries table with foreign key reference to items
     await db.execute('''
-      CREATE TABLE ${Entry.TABLENAME} (
+      CREATE TABLE IF NOT EXISTS ${Entry.TABLENAME} (
         itemId TEXT,
-        entryId TEXT PRIMARY KEY,
+        entryId TEXT,
         name TEXT NOT NULL,
         quantity INTEGER NOT NULL,
         dateTime INTEGER NOT NULL,
         price REAL NOT NULL,
         isSell INTEGER NOT NULL,
         category TEXT,
-        FOREIGN KEY(itemId) REFERENCES items(itemId)
+        FOREIGN KEY(itemId) REFERENCES ${Item.TABLENAME}(itemId)
       )
     ''');
   }
@@ -64,13 +63,14 @@ class LocalDatabase {
   static Future<List<Entry>> getAllEntries() async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(Entry.TABLENAME);
+    print("raw entries data: $maps");
     return List.generate(maps.length, (i) {
       return Entry.fromJson(maps[i]);
     });
   }
 
   // Fetch all items
-  Future<List<Item>> getAllItems() async {
+  static Future<List<Item>> getAllItems() async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.query(Item.TABLENAME);
     return List.generate(maps.length, (i) {

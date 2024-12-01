@@ -179,7 +179,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                     SearchField(
                       controller: nameController,
                       items: items,
-                      onlyItems: isSell,
+                      isSell: isSell,
                       onSelected: (selectedName) {
                         if (!isSell) return;
 
@@ -375,7 +375,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     // try {
     final name = nameController.text.trim();
 
-    if (name.isEmpty || amountController.text.trim().isEmpty || quantityValidate) {
+    if (name.isEmpty || amountController.text.trim().isEmpty || (isSell? quantityValidate : false)) {
       nameValidate = name.isEmpty;
       amountValidate = amountController.text.trim().isEmpty;
       setState(() {
@@ -420,9 +420,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     //   //
     // }
 
-    Provider.of<DataProvider>(context, listen: false).addEntry(context, newEntry: entry);
+    await Provider.of<DataProvider>(context, listen: false).addEntry(context, newEntry: entry);
 
-    await entry.addEntry();
+    // await entry.addEntry();
 
     Navigator.pop(context, entry);
   }

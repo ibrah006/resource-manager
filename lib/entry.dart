@@ -23,7 +23,7 @@ class Entry {
   }
 
   //  Item toItem() {
-  //     return Item(itemId, name: name, quantity: quantity, value: value, quantitySold: quantitySold);
+  //     return Item(itemId, name: name, quantity:  quantity, value: value, quantitySold: quantitySold);
   //   }
 
   String itemId, name;
@@ -45,7 +45,7 @@ class Entry {
   }
 
   factory Entry.fromJson(Map<String, dynamic> json) {
-    return Entry(json["itemId"], entryId: json["entryId"], dateTime: json["dateTime"], price: json["price"], isSell: json["isSell"]==1, category: json["category"], quantity: json["quantity"], name: json["name"]);
+    return Entry(json["itemId"], entryId: json["entryId"], dateTime: DateTime.fromMillisecondsSinceEpoch(json["dateTime"]), price: json["price"], isSell: json["isSell"]==1, category: json["category"]?? "", quantity: json["quantity"], name: json["name"]);
   }
 
   Map<String, Object?> toMap() {
@@ -65,34 +65,41 @@ class Entry {
   /// adds this entry to the database if it doesn't exist alreadt
   Future<int> addEntry() async {
     Database db = await LocalDatabase.database;
+    
+    // add to entries table
     final result = await db.insert(TABLENAME, toMap());
     return result;
   }
 
-  Future<bool> _isItemExist(String entryId) async {
+  Future<bool> _isItemExist() async {
     Database db = await LocalDatabase.database;
-    var result = await db.query(
-      TABLENAME,
-      where: 'entryId = ?',
-      whereArgs: [entryId],
-    );
+    late final List<Map<String, Object?>> result;
+    try {
+      result = await db.query(
+        TABLENAME,
+        where: 'itemId = ?',
+        whereArgs: [itemId],
+      );
+    } catch(e) {
+      result = [];
+    }
     return result.isNotEmpty;
   }
-
-  Future<int> addItem() async {
-    Database db = await LocalDatabase.database;
+  
+  // Future<int> addItem() async {
+  //   Database db = await LocalDatabase.database;
     
-    // Check if item already exists based on itemId
-    bool exists = await _isItemExist(entryId);
-    if (exists) {
-      // Return a message or perform another action if item already exists
-      print("Item with itemId ${entryId} already exists.");
-      return -1;
-    }
+  //   // Check if item already exists based on itemId
+  //   bool exists = await _isItemExist();
+  //   if (exists) {
+  //     // Return a message or perform another action if item already exists
+  //     print("Item with itemId ${itemId} already exists.");
+  //     return -1;
+  //   }
 
-    // Proceed to insert if no duplicate
-    return await db.insert(TABLENAME, toMap());
-  }
+  //   // Proceed to insert if no duplicate
+  //   return await db.insert(Item.TABLENAME, Item(itemId, name: name, quantityBought: 0, quantitySold: 0, totalBought: 0, totalSold: 0).toMap());
+  // }
 
 
   // Update an existing entry

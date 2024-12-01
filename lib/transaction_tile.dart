@@ -7,7 +7,7 @@ class TransactionTile extends StatelessWidget {
 
   const TransactionTile(this.entry);
 
-  String get categoryName=> entry.category?? "Uncategorized";
+  String? get categoryName => entry.category;
   IconData get categoryIcon => Icons.category_rounded;
   String get dateTime => EntryTile.formatDateTime(entry.dateTime);
   double get amount => entry.price;
@@ -46,7 +46,7 @@ class TransactionTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    categoryName,
+                    categoryName?? entry.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
@@ -67,7 +67,7 @@ class TransactionTile extends StatelessWidget {
 
           // Amount
           Text(
-            '\$${amount.toStringAsFixed(2)}',
+            '\$${(amount*quantity).toStringAsFixed(2)}',
             style: TextStyle(
               color: isIncome ? Colors.greenAccent : Colors.redAccent,
               fontSize: 16.0,

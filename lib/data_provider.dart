@@ -13,7 +13,7 @@ class DataProvider extends ChangeNotifier {
   List<Entry> entries = [];
   List<Item> items = [];
 
-  double spent =  0, sold = 0;
+  double spent = 0, sold = 0;
 
   bool _isSampleLoaded = false;
   bool sampleLoaded = false;
@@ -109,28 +109,34 @@ class DataProvider extends ChangeNotifier {
     calculateHeader();
   }
 
-  addEntry(BuildContext? context, {required Entry? newEntry}) {
+  addEntry(BuildContext? context, {required Entry? newEntry}) async {
     if (newEntry != null) {
 
       // if (!products.keys.contains(newEntry.itemId)) products[newEntry.itemId] = newEntry.name;
       // if the item doesn't exist then create
       int targetItemindex = items.indexWhere((item)=> item.itemId == newEntry.itemId);
+      late final Item item;
       if (targetItemindex == -1) {
+        item = Item.empty(newEntry);
         items.add(
-          Item(newEntry.itemId, name: newEntry.name, quantityBought: 0, quantitySold: 0, totalBought: 0, totalSold: 0)
+          item
         );
         targetItemindex = items.length - 1;
-      } 
+      }
       
       if (newEntry.isSell) {
         items[targetItemindex].quantitySold += newEntry.quantity;
-        items[targetItemindex].totalSold += newEntry.price;
+        items[targetItemindex].totalSold += newEntry.price * newEntry.quantity;
       } else {
         items[targetItemindex].quantityBought += newEntry.quantity;
-        items[targetItemindex].totalBought += newEntry.price;
+        items[targetItemindex].totalBought += newEntry.price * newEntry.quantity;
       }
 
+      // update or add item if doesn't exist already
+      await items[targetItemindex].updateItem();
+
       entries.add(newEntry);
+      await newEntry.addEntry();
 
       context!=null?
         ScaffoldMessenger.of(context).showSnackBar(
@@ -139,6 +145,8 @@ class DataProvider extends ChangeNotifier {
           ),
         ) : null;
 
+      calculateHeader();
+      
       notifyListeners();
     }
   }
@@ -165,23 +173,34 @@ class DataProvider extends ChangeNotifier {
     // });
 
     update(Item item) {
+
+      print("calculateHeader->  update-> sold: $sold, ${item.totalSold}, ${item.quantitySold} && spent: $spent, ${item.totalBought}, ${item.quantityBought}");
+
       // TODO: update the specific product
-      sold += item.totalSold * item.quantitySold;
-      spent += item.totalBought * item.totalBought;
+      sold += item.totalSold;
+      spent += item.totalBought;
     }
 
-    if (newEntry != null) {
-      if (newEntry.isSell) {
-        sold += newEntry.price * newEntry.quantity;
-      } else {
-        spent += newEntry.price * newEntry.quantity;
-      }
-      return;
-    }
+    // TODO
+    // if (newEntry != null) {
+    //   if (newEntry.isSell) {
+    //     sold += newEntry.price * newEntry.quantity;
+    //   } else {
+    //     spent += newEntry.price * newEntry.quantity;
+    //   }
+    //   return;
+    // }
 
+    sold = 0;
+    spent = 0;
+    print("items from updateHeader: $items, length: ${items.length}");
     items.forEach((item) {
       update(item);
     });
+
+    print("sold: $sold, bought: $spent");
+
+    notifyListeners();
   }
 
 }
